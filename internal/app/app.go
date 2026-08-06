@@ -5,10 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/kirildev25/go-api-pgx-postgres/internal/api"
 )
 
 type Application struct {
-	Logger *log.Logger
+	Logger         *log.Logger
+	WorkoutHandler *api.WorkoutHandler
 }
 
 func NewApplication() (*Application, error) {
