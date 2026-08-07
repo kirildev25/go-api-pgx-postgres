@@ -3,9 +3,9 @@ tmp_dir = "tmp"
 
 [build]
 cmd = "go build -o ./tmp/main ./main.go"
-bin = "./tmp/main"
+entrypoint = ["./tmp/main"]
 include_ext = ["go"]
-exclude_dir = ["tmp", "vendor", "node_modules"]
+exclude_dir = ["database", "tmp", "vendor", "node_modules"]
 delay = 1000  # ms
 
 [log]

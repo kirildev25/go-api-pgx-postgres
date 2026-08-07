@@ -3,7 +3,7 @@ services:
     container_name: workoutDB
     image: postgres:18-alpine
     ports:
-    - "5432:5432"
+    - "${DB_PORT}:5432"
     env_file:
      - .env
     environment:
