@@ -1,17 +1,23 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/kirildev25/go-api-pgx-postgres/internal/store"
 )
 
-type WorkoutHandler struct{}
+type WorkoutHandler struct {
+	workoutStore store.WorkoutStore
+}
 
-func NewWorkoutHandler() *WorkoutHandler {
-	return &WorkoutHandler{}
+func NewWorkoutHandler(workoutStore store.WorkoutStore) *WorkoutHandler {
+	return &WorkoutHandler{
+		workoutStore: workoutStore,
+	}
 }
 
 func (wh *WorkoutHandler) HandleGetWorkoutByID(w http.ResponseWriter, r *http.Request) {
@@ -31,5 +37,20 @@ func (wh *WorkoutHandler) HandleGetWorkoutByID(w http.ResponseWriter, r *http.Re
 }
 
 func (wh *WorkoutHandler) HandleCreateWorkout(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "created a workout\n")
+	var workout store.Workout
+	err := json.NewDecoder(r.Body).Decode(&workout)
+	if err != nil {
+		fmt.Errorf("%w", err)
+		http.Error(w, "failed to create workout", http.StatusInternalServerError)
+		return
+	}
+	createdWorkout, err := wh.workoutStore.CreateWorkout(&workout)
+	if err != nil {
+		fmt.Errorf("%w", err)
+		http.Error(w, "failed to create workout", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(createdWorkout)
 }
