@@ -39,9 +39,8 @@ func (wh *WorkoutHandler) HandleGetWorkoutByID(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(workout)
+	utils.WriteJSON(w, http.StatusOK, utils.Envelope{"workout": workout})
+
 }
 
 func (wh *WorkoutHandler) HandleCreateWorkout(w http.ResponseWriter, r *http.Request) {
@@ -59,20 +58,15 @@ func (wh *WorkoutHandler) HandleCreateWorkout(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(createdWorkout)
+	utils.WriteJSON(w, http.StatusOK, utils.Envelope{"workout": createdWorkout})
+	json.NewEncoder(w).Encode()
 }
 
 func (wh *WorkoutHandler) HandleUpdateWorkoutByID(w http.ResponseWriter, r *http.Request) {
-	paramsWorkoutID := chi.URLParam(r, "id")
-	if paramsWorkoutID == "" {
-		http.NotFound(w, r)
-		return
-	}
-
-	workoutID, err := strconv.ParseInt(paramsWorkoutID, 10, 64)
+	workoutID, err := utils.ReadIDParam(r)
 	if err != nil {
-		http.NotFound(w, r)
+		wh.logger.Printf("ERROR: readIDParam: %v", err)
+		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid workout id"})
 		return
 	}
 
@@ -99,7 +93,7 @@ func (wh *WorkoutHandler) HandleUpdateWorkoutByID(w http.ResponseWriter, r *http
 	err = json.NewDecoder(r.Body).Decode(&updateWorkoutRequest)
 	if err != nil {
 		wh.logger.Printf("ERROR: json.NewDecoder: %v", err)
-		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": err.Error()})
+		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid request payload"})
 		return
 	}
 	if updateWorkoutRequest.Title != nil {
@@ -124,21 +118,14 @@ func (wh *WorkoutHandler) HandleUpdateWorkoutByID(w http.ResponseWriter, r *http
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(existingWorkout)
+	utils.WriteJSON(w, http.StatusOK, utils.Envelope{"workout": existingWorkout})
 }
 
 func (wh *WorkoutHandler) HandleDeleteWorkoutByID(w http.ResponseWriter, r *http.Request) {
-	paramsWorkoutID := chi.URLParam(r, "id")
-	if paramsWorkoutID == " " {
-		http.NotFound(w, r)
-		return
-	}
-
-	workoutID, err := strconv.ParseInt(paramsWorkoutID, 10, 64)
+	workoutID, err := utils.ReadIDParam(r)
 	if err != nil {
-		http.NotFound(w, r)
+		wh.logger.Printf("ERROR: readIDParam: %v", err)
+		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "invalid workout id"})
 		return
 	}
 
@@ -155,6 +142,6 @@ func (wh *WorkoutHandler) HandleDeleteWorkoutByID(w http.ResponseWriter, r *http
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	utils.WriteJSON(w, http.StatusNoContent, utils.Envelope{"deleted": workoutID})
 
 }
