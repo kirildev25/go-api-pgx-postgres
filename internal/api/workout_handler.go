@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/kirildev25/go-api-pgx-postgres/internal/store"
 	"github.com/kirildev25/go-api-pgx-postgres/internal/utils"
 )
@@ -59,7 +57,6 @@ func (wh *WorkoutHandler) HandleCreateWorkout(w http.ResponseWriter, r *http.Req
 	}
 
 	utils.WriteJSON(w, http.StatusOK, utils.Envelope{"workout": createdWorkout})
-	json.NewEncoder(w).Encode()
 }
 
 func (wh *WorkoutHandler) HandleUpdateWorkoutByID(w http.ResponseWriter, r *http.Request) {
