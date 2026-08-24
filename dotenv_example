@@ -1,0 +1,17 @@
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_PORT_TEST="5433"
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="postgres"
+POSTGRES_DB="postgres"
+
+# goose -dir migrations postgres "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" up
+# becomes
+# goose up
+GOOSE_DRIVER="postgres"
+GOOSE_MIGRATION_DIR="migrations"
+
+PROD_DBSTRING="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?sslmode=disable"
+TEST_DBSTRING="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT_TEST}/${POSTGRES_DB}?sslmode=disable"
+GOOSE_DBSTRING="${PROD_DBSTRING}"
+# GOOSE_DBSTRING="${TEST_DBSTRING}"
