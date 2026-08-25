@@ -163,7 +163,7 @@ curl -X POST "http://localhost:8080/users" \
           "bio": "Fitness enthusiast and software developer"
         }'
 
-curl -X POST "http://localhost:8080/tokens/authentication" \
+curl -X POST "http://localhost:8080/tokens/authenticate" \
      -H "Content-Type: application/json" \
      -d '{
           "username": "johndoe",
