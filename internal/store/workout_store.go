@@ -211,5 +211,15 @@ func (pg *PostgresWorkoutStore) DeleteWorkout(id int64) error {
 }
 
 func (pg *PostgresWorkoutStore) GetWorkoutOwner(id int64) (int, error) {
-	return 0, nil
+	var userID int
+	query := `
+	SELECT user_id FROM workouts WHERE id = $1
+	`
+
+	err := pg.db.QueryRow(query, id).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return userID, nil
 }
