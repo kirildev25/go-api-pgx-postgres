@@ -50,10 +50,17 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+var AnonymousUser = &User{}
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
+}
+
 type UserStore interface {
 	CreateUser(*User) error
 	GetUserByUsername(username string) (*User, error)
 	UpdateUser(*User) error
+	GetUserToken(scope, tokenPlainText string) (*User, error)
 }
 
 type PostgresUserStore struct {
@@ -126,4 +133,8 @@ func (s *PostgresUserStore) UpdateUser(user *User) error {
 		return sql.ErrNoRows
 	}
 	return nil
+}
+
+func (s *PostgresUserStore) GetUserToken(scope, tokenPlainText string) (*User, error) {
+	return nil, nil
 }
