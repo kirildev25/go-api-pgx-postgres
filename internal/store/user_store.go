@@ -61,7 +61,7 @@ type UserStore interface {
 	CreateUser(*User) error
 	GetUserByUsername(username string) (*User, error)
 	UpdateUser(*User) error
-	GetUserToken(scope, plaintextPassword string) (*User, error)
+	GetUserToken(scope, token string) (*User, error)
 }
 
 type PostgresUserStore struct {
@@ -136,8 +136,8 @@ func (s *PostgresUserStore) UpdateUser(user *User) error {
 	return nil
 }
 
-func (s *PostgresUserStore) GetUserToken(scope, plaintextPassword string) (*User, error) {
-	tokenHash := sha256.Sum256([]byte(plaintextPassword))
+func (s *PostgresUserStore) GetUserToken(scope, token string) (*User, error) {
+	tokenHash := sha256.Sum256([]byte(token))
 
 	query := `
 	SELECT u.id, u.username, u.email, u.password_hash, u.bio, u.created_at, u.updated_at
